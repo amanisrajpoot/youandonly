@@ -13,12 +13,6 @@ const categoryBlurbs = {
   Kids: "Fun, colorful, and durable fashion for kids of all ages.",
   Accessories: "Complete your look with our curated accessories collection.",
 };
-const categoryPosters = {
-  Women: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=facearea&w=800&h=400",
-  Men: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=facearea&w=800&h=400",
-  Kids: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=facearea&w=800&h=400",
-  Accessories: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=800&q=80",
-};
 
 const editorialPosters = [
   "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&q=80",
@@ -59,10 +53,6 @@ export default function HomePage() {
   // Helper: get trending (random 4)
   const getTrending = () => {
     return [...products].sort(() => 0.5 - Math.random()).slice(0, 4);
-  };
-  // Helper: get editor's choice (first product)
-  const getEditorsChoice = () => {
-    return products.length > 0 ? [products[0]] : [];
   };
 
   // Compose all sections in a fixed order (Hot Sellers first, then the rest in a chosen order)
@@ -107,7 +97,7 @@ export default function HomePage() {
       blurb: categoryBlurbs.Women,
       products: getProducts('Women', 4),
       editorsNote: 'Our favorite picks for her. Style, comfort, and confidence.',
-      badge: 'Editor\'s Pick',
+      badge: 'Editor&apos;s Pick',
     },
     // 6. Accessories (Carousel)
     {
