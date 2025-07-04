@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import CartIcon from './CartIcon';
-import CartModal from './CartModal';
 
 export default function Navbar({ children }) {
   const [cartOpen, setCartOpen] = useState(false);
@@ -9,8 +7,6 @@ export default function Navbar({ children }) {
       <div className="text-2xl font-bold text-cyan-700 cursor-pointer" onClick={() => window.location.href = '/'}>You&Only</div>
       <div className="flex-1 flex justify-end items-center gap-2">
         {children}
-        <CartIcon onClick={() => setCartOpen(true)} />
-        <CartModal open={cartOpen} onClose={() => setCartOpen(false)} />
       </div>
     </nav>
   );

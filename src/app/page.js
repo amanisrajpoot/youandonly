@@ -6,6 +6,7 @@ import HeroSection from '../components/HeroSection';
 import Footer from '../components/Footer';
 import MagazineSection from '../components/MagazineSection';
 
+
 const categoryBlurbs = {
   Women: "Discover the latest trends and timeless classics for every woman.",
   Men: "Style and comfort for every man, from casual to formal.",

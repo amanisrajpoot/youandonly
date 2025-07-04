@@ -3,13 +3,11 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Navbar from '../../../components/Navbar';
 import Footer from '../../../components/Footer';
-import { useCart } from '../../../context/CartContext';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { addToCart } = useCart();
 
   useEffect(() => {
     fetch(`/api/products/${id}`)
@@ -35,7 +33,7 @@ export default function ProductDetailPage() {
             <div className="text-lg md:text-2xl font-bold text-cyan-700 mb-2 md:mb-4">${product.price.toFixed(2)}</div>
             <p className="text-gray-700 mb-4 md:mb-6 text-sm md:text-base">{product.description}</p>
           </div>
-          <button className="bg-cyan-600 text-white px-4 py-2 md:px-6 md:py-3 rounded-lg font-semibold text-base md:text-lg hover:bg-cyan-700 transition w-full md:w-auto" onClick={() => addToCart(product)}>
+          <button className="bg-cyan-600 text-white px-4 py-2 md:px-6 md:py-3 rounded-lg font-semibold text-base md:text-lg hover:bg-cyan-700 transition w-full md:w-auto">
             Add to Cart
           </button>
         </div>
