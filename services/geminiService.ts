@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import type { Outfit, ClothingItem } from '../types';
 import { CLOTHING_CATALOG } from '../constants';
@@ -40,7 +39,8 @@ export async function generateOutfits(style: string): Promise<Outfit[]> {
   const catalogText = CLOTHING_CATALOG.map(item => `- ${item.name} (${item.category})`).join('\n');
 
   const prompt = `
-    You are AURA, an expert AI fashion stylist with a futuristic and creative flair.
+    You are the expert AI fashion stylist for "You & Only," a brand focused on unique, personal style. 
+    You have a futuristic and creative flair.
     Your task is to create three distinct and complete outfits based on the user's chosen style: "${style}".
 
     Use only items from the following catalog:

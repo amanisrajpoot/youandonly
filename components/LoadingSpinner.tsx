@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface LoadingSpinnerProps {
@@ -13,8 +12,8 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ className = 'w-1
       xmlns="http://www.w3.org/2000/svg"
       preserveAspectRatio="xMidYMid"
     >
-      <circle cx="50" cy="50" r="45" stroke="rgba(217, 70, 239, 0.3)" fill="none" strokeWidth="6" />
-      <circle cx="50" cy="50" r="45" stroke="#D946EF" fill="none" strokeWidth="6" strokeLinecap="round">
+      <circle cx="50" cy="50" r="45" stroke="rgba(34, 211, 238, 0.3)" fill="none" strokeWidth="6" />
+      <circle cx="50" cy="50" r="45" stroke="#22D3EE" fill="none" strokeWidth="6" strokeLinecap="round">
         <animateTransform
           attributeName="transform"
           type="rotate"

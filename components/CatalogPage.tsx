@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import type { ClothingItem } from '../types';
 import { CLOTHING_CATALOG } from '../constants';
@@ -38,8 +37,8 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onProductClick }) => {
             onClick={() => setSelectedCategory(category)}
             className={`font-orbitron text-sm md:text-base px-5 py-2 rounded-full border-2 transition-all duration-300 transform hover:scale-105 ${
               selectedCategory === category
-                ? 'bg-fuchsia-500 border-fuchsia-500 text-white shadow-[0_0_15px_rgba(217,70,239,0.4)]'
-                : 'bg-gray-800/50 border-gray-600 text-gray-300 hover:border-fuchsia-500 hover:text-white'
+                ? 'bg-cyan-500 border-cyan-500 text-white shadow-[0_0_15px_rgba(34,211,238,0.4)]'
+                : 'bg-gray-800/50 border-gray-600 text-gray-300 hover:border-cyan-500 hover:text-white'
             }`}
           >
             {category}

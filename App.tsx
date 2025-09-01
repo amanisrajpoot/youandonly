@@ -1,10 +1,9 @@
-
 import React, { useState, useCallback } from 'react';
 import { Header } from './components/Header';
 import { StyleSelector } from './components/StyleSelector';
 import { OutfitCard } from './components/OutfitCard';
 import { LoadingSpinner } from './components/LoadingSpinner';
-import { FASHION_STYLES } from './constants';
+import { FASHION_STYLES, CLOTHING_CATALOG } from './constants';
 import type { Outfit, ClothingItem } from './types';
 import { generateOutfits } from './services/geminiService';
 import { SparklesIcon } from './components/icons';
@@ -12,9 +11,11 @@ import { ProductDetailPage } from './components/ProductDetailPage';
 import { CartPage } from './components/CartPage';
 import { CatalogPage } from './components/CatalogPage';
 import { CheckoutPage } from './components/CheckoutPage';
+import { ProductCard } from './components/ProductCard';
 
 
 type View = 'home' | 'pdp' | 'cart' | 'catalog' | 'checkout';
+const featuredItems = CLOTHING_CATALOG.filter(item => [21, 7, 12, 19].includes(item.id));
 
 const App: React.FC = () => {
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
@@ -64,8 +65,6 @@ const App: React.FC = () => {
   };
 
   const handleCheckout = () => {
-    // In a real app, this would process payment, etc.
-    // For this demo, we'll just clear the cart and show a confirmation.
     setCart([]);
     setView('checkout');
   };
@@ -76,12 +75,35 @@ const App: React.FC = () => {
 
   const renderHome = () => (
     <>
-     <section className="text-center max-w-3xl mx-auto">
+     <section className="text-center max-w-4xl mx-auto mb-24">
+        <h2 className="text-4xl md:text-5xl font-bold font-orbitron mb-4 text-shadow-glow">
+          Find a Style That's Uniquely You
+        </h2>
+        <p className="text-lg text-gray-300">
+          Explore our curated collection or let our AI build the perfect outfit, just for you.
+        </p>
+      </section>
+
+      <section className="mb-24">
+        <h3 className="text-3xl font-orbitron font-bold text-center mb-8 text-shadow-glow">Featured Collection</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-6xl mx-auto">
+            {featuredItems.map(item => (
+                <ProductCard key={item.id} product={item} onClick={() => handleProductClick(item)} />
+            ))}
+        </div>
+        <div className="text-center mt-10">
+            <button onClick={() => setView('catalog')} className="font-orbitron text-lg inline-flex items-center gap-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-cyan-400 focus:ring-opacity-50 shadow-[0_0_20px_rgba(34,211,238,0.5)]">
+                View Full Collection
+            </button>
+        </div>
+    </section>
+
+    <section className="text-center max-w-3xl mx-auto py-16 border-t border-cyan-500/20">
         <h2 className="text-3xl md:text-4xl font-bold font-orbitron mb-4 text-shadow-glow">
-          Discover Your Signature Look
+            Need Inspiration? Meet Your AI Stylist
         </h2>
         <p className="text-lg text-gray-300 mb-8">
-          Select a fashion style below and let our AI stylist, AURA, craft unique outfits just for you.
+          Select a fashion style below and let our AI craft unique outfits, just for you.
         </p>
         <StyleSelector
           styles={FASHION_STYLES}
@@ -93,7 +115,7 @@ const App: React.FC = () => {
             <button
               onClick={handleGenerateClick}
               disabled={isLoading}
-              className="font-orbitron text-lg inline-flex items-center gap-3 bg-fuchsia-600 hover:bg-fuchsia-500 disabled:bg-fuchsia-800 disabled:cursor-not-allowed text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-fuchsia-400 focus:ring-opacity-50 shadow-[0_0_20px_rgba(217,70,239,0.5)]"
+              className="font-orbitron text-lg inline-flex items-center gap-3 bg-cyan-600 hover:bg-cyan-500 disabled:bg-cyan-800 disabled:cursor-not-allowed text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-cyan-400 focus:ring-opacity-50 shadow-[0_0_20px_rgba(34,211,238,0.5)]"
             >
               {isLoading ? (
                 <>
@@ -122,10 +144,9 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {!isLoading && generatedOutfits.length === 0 && !error && (
+        {!isLoading && generatedOutfits.length === 0 && !error && selectedStyle && (
             <div className="text-center text-gray-500 mt-20">
-            <p className="text-2xl font-orbitron">Your AI-curated gallery awaits.</p>
-            <p>Select a style and press generate to begin.</p>
+            <p className="text-2xl font-orbitron">Your personal gallery awaits.</p>
           </div>
         )}
       </section>
@@ -151,7 +172,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-black bg-opacity-80 backdrop-blur-sm text-gray-100">
-      <div className="absolute top-0 left-0 w-full h-full bg-gray-900/50 z-[-1] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
+      <div className="absolute top-0 left-0 w-full h-full bg-gray-900/50 z-[-1] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(16,123,148,0.3),rgba(255,255,255,0))]"></div>
       <Header onNavigate={handleNavigate} cartItemCount={cart.length} />
       <main className="container mx-auto px-4 py-8">
         {renderContent()}

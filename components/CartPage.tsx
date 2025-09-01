@@ -1,4 +1,3 @@
-
 import React from 'react';
 import type { ClothingItem } from '../types';
 import { TrashIcon } from './icons';
@@ -20,7 +19,7 @@ export const CartPage: React.FC<CartPageProps> = ({ cartItems, onBack, onRemoveI
       {cartItems.length === 0 ? (
         <div className="text-center bg-gray-800/40 border border-gray-700 rounded-lg p-12">
           <p className="text-xl text-gray-400 mb-4">Your shopping cart is empty.</p>
-          <button onClick={onBack} className="font-orbitron text-lg text-fuchsia-400 hover:text-fuchsia-300">
+          <button onClick={onBack} className="font-orbitron text-lg text-cyan-400 hover:text-cyan-300">
             &larr; Discover your style
           </button>
         </div>
@@ -53,11 +52,11 @@ export const CartPage: React.FC<CartPageProps> = ({ cartItems, onBack, onRemoveI
               <p className="text-xs text-gray-500 mb-6">Shipping & taxes calculated at checkout.</p>
               <button
                 onClick={onCheckout}
-                className="font-orbitron text-lg w-full bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold py-3 px-8 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(217,70,239,0.5)]"
+                className="font-orbitron text-lg w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 px-8 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(34,211,238,0.5)]"
               >
                 Proceed to Checkout
               </button>
-              <button onClick={onBack} className="w-full text-center mt-4 text-fuchsia-400 hover:text-fuchsia-300">
+              <button onClick={onBack} className="w-full text-center mt-4 text-cyan-400 hover:text-cyan-300">
                 &larr; Continue Shopping
               </button>
             </div>
