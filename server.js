@@ -43,8 +43,20 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
+    database: prisma ? 'connected' : 'disconnected'
   });
+});
+
+// Database check middleware
+app.use('/api', (req, res, next) => {
+  if (!prisma && req.path !== '/health') {
+    return res.status(503).json({
+      success: false,
+      message: 'Database not available. Please try again later.'
+    });
+  }
+  next();
 });
 
 // API routes
@@ -96,12 +108,18 @@ async function startServer() {
     }
 
     // Now initialize Prisma client
-    const { PrismaClient } = await import('@prisma/client');
-    prisma = new PrismaClient();
-    
-    // Connect to database
-    await prisma.$connect();
-    console.log('✅ Database connected successfully');
+    try {
+      const { PrismaClient } = await import('@prisma/client');
+      prisma = new PrismaClient();
+      
+      // Connect to database
+      await prisma.$connect();
+      console.log('✅ Database connected successfully');
+    } catch (error) {
+      console.error('❌ Database connection failed:', error.message);
+      console.log('⚠️ Starting server without database (API will be limited)');
+      prisma = null;
+    }
 
     // Start server
     app.listen(PORT, '0.0.0.0', () => {
