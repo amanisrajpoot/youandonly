@@ -1,7 +1,10 @@
-import React, { useState, useMemo } from 'react';
-import type { ClothingItem } from '../types';
-import { CLOTHING_CATALOG } from '../constants';
+import React, { useState, useMemo, useEffect } from 'react';
+import type { ClothingItem, SearchFilters, SortOption } from '../types';
 import { ProductCard } from './ProductCard';
+import { LoadingSpinner } from './LoadingSpinner';
+import { SearchBar } from './SearchBar';
+import { FilterPanel } from './FilterPanel';
+import productService from '../services/productService';
 
 interface CatalogPageProps {
   onProductClick: (item: ClothingItem) => void;
@@ -10,14 +13,69 @@ interface CatalogPageProps {
 const categories = ['All', 'Top', 'Bottom', 'Outerwear', 'Shoes', 'Accessory'];
 
 export const CatalogPage: React.FC<CatalogPageProps> = ({ onProductClick }) => {
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [products, setProducts] = useState<ClothingItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filters, setFilters] = useState<SearchFilters>({});
+  const [currentSort, setCurrentSort] = useState('name-asc');
+  const [showFilters, setShowFilters] = useState(false);
 
-  const filteredItems = useMemo(() => {
-    if (selectedCategory === 'All') {
-      return CLOTHING_CATALOG;
-    }
-    return CLOTHING_CATALOG.filter(item => item.category === selectedCategory);
-  }, [selectedCategory]);
+  const sortOptions = productService.getSortOptions();
+
+  // Load products on component mount
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const items = await productService.getAllProducts();
+        setProducts(items);
+      } catch (err) {
+        console.error('Failed to load products:', err);
+        setError('Failed to load products');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, []);
+
+  // Search and filter products
+  const filteredItems = useMemo(async () => {
+    const [field, direction] = currentSort.split('-');
+    const searchFilters: SearchFilters = {
+      ...filters,
+      search: searchQuery || undefined,
+    };
+    
+    return await productService.searchProducts(searchFilters, field, direction as 'asc' | 'desc');
+  }, [products, filters, searchQuery, currentSort]);
+
+  const [displayedItems, setDisplayedItems] = useState<ClothingItem[]>([]);
+
+  // Update displayed items when filtered items change
+  useEffect(() => {
+    filteredItems.then(items => setDisplayedItems(items));
+  }, [filteredItems]);
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleFiltersChange = (newFilters: SearchFilters) => {
+    setFilters(newFilters);
+  };
+
+  const handleSortChange = (field: string, direction: 'asc' | 'desc') => {
+    setCurrentSort(`${field}-${direction}`);
+  };
+
+  const clearAllFilters = () => {
+    setFilters({});
+    setSearchQuery('');
+  };
 
   return (
     <section className="animate-fade-in">
@@ -29,27 +87,92 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onProductClick }) => {
           Browse our curated catalog of futuristic and classic pieces.
         </p>
       </div>
-      
-      <div className="flex flex-wrap justify-center gap-3 md:gap-4 mb-10">
-        {categories.map(category => (
+
+      {/* Search and Filter Controls */}
+      <div className="mb-8">
+        <div className="flex flex-col lg:flex-row gap-4 mb-6">
+          {/* Search Bar */}
+          <div className="flex-1">
+            <SearchBar
+              onSearch={handleSearch}
+              placeholder="Search products, categories, or tags..."
+              className="w-full"
+            />
+          </div>
+          
+          {/* Filter Toggle Button (Mobile) */}
           <button
-            key={category}
-            onClick={() => setSelectedCategory(category)}
-            className={`font-orbitron text-sm md:text-base px-5 py-2 rounded-full border-2 transition-all duration-300 transform hover:scale-105 ${
-              selectedCategory === category
-                ? 'bg-cyan-500 border-cyan-500 text-white shadow-[0_0_15px_rgba(34,211,238,0.4)]'
-                : 'bg-gray-800/50 border-gray-600 text-gray-300 hover:border-cyan-500 hover:text-white'
-            }`}
+            onClick={() => setShowFilters(!showFilters)}
+            className="lg:hidden bg-gray-800 border border-gray-600 text-white px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors"
           >
-            {category}
+            {showFilters ? 'Hide Filters' : 'Show Filters'}
           </button>
-        ))}
+        </div>
+
+        {/* Results Summary */}
+        <div className="flex justify-between items-center mb-4">
+          <p className="text-gray-300">
+            {isLoading ? 'Loading...' : `${displayedItems.length} products found`}
+          </p>
+          {(searchQuery || Object.keys(filters).length > 0) && (
+            <button
+              onClick={clearAllFilters}
+              className="text-cyan-400 hover:text-cyan-300 text-sm underline"
+            >
+              Clear all filters
+            </button>
+          )}
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
-        {filteredItems.map(item => (
-          <ProductCard key={item.id} product={item} onClick={() => onProductClick(item)} />
-        ))}
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Filter Panel */}
+        <div className="lg:w-80">
+          <FilterPanel
+            filters={filters}
+            onFiltersChange={handleFiltersChange}
+            sortOptions={sortOptions}
+            currentSort={currentSort}
+            onSortChange={handleSortChange}
+            className={showFilters ? 'block' : 'hidden lg:block'}
+          />
+        </div>
+
+        {/* Products Grid */}
+        <div className="flex-1">
+          {isLoading ? (
+            <div className="flex justify-center items-center py-12">
+              <LoadingSpinner className="w-8 h-8" />
+              <span className="ml-3 text-gray-300">Loading products...</span>
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <p className="text-red-400 text-lg mb-4">{error}</p>
+              <button 
+                onClick={() => window.location.reload()} 
+                className="text-cyan-400 hover:text-cyan-300 underline"
+              >
+                Try again
+              </button>
+            </div>
+          ) : displayedItems.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-400 text-lg mb-4">No products found matching your criteria</p>
+              <button 
+                onClick={clearAllFilters}
+                className="text-cyan-400 hover:text-cyan-300 underline"
+              >
+                Clear filters
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+              {displayedItems.map(item => (
+                <ProductCard key={item.id} product={item} onClick={() => onProductClick(item)} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );

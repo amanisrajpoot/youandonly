@@ -1,12 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { UserIcon, CartIcon } from './icons';
+import { useAuth } from '../contexts/AuthContext';
+import { LoginModal } from './LoginModal';
+import { RegisterModal } from './RegisterModal';
 
 interface HeaderProps {
   onNavigate: (view: 'home' | 'cart' | 'catalog') => void;
+  onViewOrders: () => void;
+  onViewAdmin: () => void;
   cartItemCount: number;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onNavigate, cartItemCount }) => {
+export const Header: React.FC<HeaderProps> = ({ onNavigate, onViewOrders, onViewAdmin, cartItemCount }) => {
+  const { user, logout } = useAuth();
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+
+  const handleUserClick = () => {
+    if (user) {
+      // User is logged in - could show profile dropdown in future
+      console.log('User profile clicked');
+    } else {
+      setShowLoginModal(true);
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <header className="py-4 border-b border-cyan-500/20 sticky top-0 bg-gray-900/50 backdrop-blur-lg z-10">
       <div className="container mx-auto flex justify-between items-center px-4">
@@ -23,9 +45,49 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, cartItemCount }) => 
         </nav>
 
         <div className="flex items-center gap-4 md:gap-6">
-          <button className="text-gray-300 hover:text-white transition-colors">
-            <UserIcon className="w-6 h-6" />
-          </button>
+                  {user ? (
+                    <div className="flex items-center gap-4">
+                      <span className="text-gray-300 hidden md:block">
+                        Welcome, {user.firstName}
+                      </span>
+                      <button
+                        onClick={onViewOrders}
+                        className="text-gray-300 hover:text-white transition-colors text-sm"
+                      >
+                        Orders
+                      </button>
+                      {user.role === 'ADMIN' && (
+                        <button
+                          onClick={onViewAdmin}
+                          className="text-cyan-400 hover:text-cyan-300 transition-colors text-sm"
+                        >
+                          Admin
+                        </button>
+                      )}
+                      <button
+                        onClick={handleLogout}
+                        className="text-gray-300 hover:text-white transition-colors text-sm"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  ) : (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowLoginModal(true)}
+                className="text-gray-300 hover:text-white transition-colors text-sm"
+              >
+                Login
+              </button>
+              <span className="text-gray-500">|</span>
+              <button
+                onClick={() => setShowRegisterModal(true)}
+                className="text-cyan-400 hover:text-cyan-300 transition-colors text-sm"
+              >
+                Register
+              </button>
+            </div>
+          )}
           <button onClick={() => onNavigate('cart')} className="relative text-gray-300 hover:text-white transition-colors">
             <CartIcon className="w-7 h-7" />
             {cartItemCount > 0 && (
@@ -36,6 +98,24 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, cartItemCount }) => 
           </button>
         </div>
       </div>
+
+      {/* Modals */}
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onSwitchToRegister={() => {
+          setShowLoginModal(false);
+          setShowRegisterModal(true);
+        }}
+      />
+      <RegisterModal
+        isOpen={showRegisterModal}
+        onClose={() => setShowRegisterModal(false)}
+        onSwitchToLogin={() => {
+          setShowRegisterModal(false);
+          setShowLoginModal(true);
+        }}
+      />
     </header>
   );
 };
