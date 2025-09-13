@@ -23,7 +23,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 
 // Middleware
 app.use(helmet({
@@ -70,13 +70,47 @@ app.use('/api/payments', paymentRoutes);
 // Serve static files from dist directory (frontend build)
 app.use(express.static(path.join(__dirname, 'dist')));
 
+// Debug route to check if files exist
+app.get('/debug', async (req, res) => {
+  try {
+    const fs = await import('fs');
+    const distPath = path.join(__dirname, 'dist');
+    const indexPath = path.join(__dirname, 'dist', 'index.html');
+    
+    res.json({
+      distExists: fs.existsSync(distPath),
+      indexExists: fs.existsSync(indexPath),
+      distContents: fs.existsSync(distPath) ? fs.readdirSync(distPath) : 'dist not found',
+      currentDir: __dirname,
+      port: PORT
+    });
+  } catch (error) {
+    res.json({
+      error: error.message,
+      currentDir: __dirname,
+      port: PORT
+    });
+  }
+});
+
 // Serve frontend for all non-API routes
-app.get('*', (req, res) => {
+app.get('*', async (req, res) => {
   // Skip API routes
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ success: false, message: 'Route not found' });
   }
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  
+  try {
+    const fs = await import('fs');
+    const indexPath = path.join(__dirname, 'dist', 'index.html');
+    if (fs.existsSync(indexPath)) {
+      res.sendFile(indexPath);
+    } else {
+      res.status(404).send('Frontend not found. Please check if the build completed successfully.');
+    }
+  } catch (error) {
+    res.status(500).send('Error serving frontend: ' + error.message);
+  }
 });
 
 // Error handling middleware
