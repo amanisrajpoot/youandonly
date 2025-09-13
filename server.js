@@ -93,6 +93,22 @@ app.get('/debug', async (req, res) => {
   }
 });
 
+// Test route to see HTML content
+app.get('/test-html', async (req, res) => {
+  try {
+    const fs = await import('fs');
+    const indexPath = path.join(__dirname, 'dist', 'index.html');
+    if (fs.existsSync(indexPath)) {
+      const htmlContent = fs.readFileSync(indexPath, 'utf8');
+      res.send(htmlContent);
+    } else {
+      res.send('index.html not found');
+    }
+  } catch (error) {
+    res.send('Error: ' + error.message);
+  }
+});
+
 // Serve frontend for all non-API routes
 app.get('*', async (req, res) => {
   // Skip API routes
@@ -100,15 +116,20 @@ app.get('*', async (req, res) => {
     return res.status(404).json({ success: false, message: 'Route not found' });
   }
   
+  console.log(`Serving frontend for path: ${req.path}`);
+  
   try {
     const fs = await import('fs');
     const indexPath = path.join(__dirname, 'dist', 'index.html');
     if (fs.existsSync(indexPath)) {
+      console.log('Serving index.html');
       res.sendFile(indexPath);
     } else {
+      console.log('index.html not found');
       res.status(404).send('Frontend not found. Please check if the build completed successfully.');
     }
   } catch (error) {
+    console.error('Error serving frontend:', error);
     res.status(500).send('Error serving frontend: ' + error.message);
   }
 });
