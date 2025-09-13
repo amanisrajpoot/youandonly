@@ -10,7 +10,7 @@
     "deploy": "node deploy-railway.js",
     "setup": "node setup-railway.js",
     "start": "node server.js",
-    "postinstall": "npm run build",
+    "postinstall": "echo 'Post-install complete'",
     "railway:build": "npm run build",
     "railway:start": "npm start"
   },
@@ -32,6 +32,7 @@
   "devDependencies": {
     "@types/node": "^22.14.0",
     "typescript": "~5.8.2",
-    "vite": "^6.2.0"
+    "vite": "^6.2.0",
+    "prisma": "^5.22.0"
   }
 }

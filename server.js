@@ -4,13 +4,12 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { PrismaClient } from '@prisma/client';
 
 // Load environment variables
 dotenv.config();
 
-// Initialize Prisma client
-export const prisma = new PrismaClient();
+// Initialize Prisma client (will be set after generation)
+let prisma;
 
 // Import backend routes
 import authRoutes from './backend/src/routes/auth.js';
@@ -81,12 +80,14 @@ app.use((err, req, res, next) => {
 // Initialize database and start server
 async function startServer() {
   try {
-    // Setup database if needed
+    // Setup database first
     console.log('🗄️ Setting up database...');
     const { execSync } = await import('child_process');
     
     try {
-      execSync('cd backend && npx prisma generate', { stdio: 'pipe' });
+      // Copy Prisma schema to root for generation
+      execSync('cp backend/prisma/schema.prisma ./schema.prisma', { stdio: 'pipe' });
+      execSync('npx prisma generate', { stdio: 'pipe' });
       execSync('cd backend && npx prisma db push', { stdio: 'pipe' });
       execSync('cd backend && node src/seed-sqlite.js', { stdio: 'pipe' });
       console.log('✅ Database setup completed');
@@ -94,8 +95,16 @@ async function startServer() {
       console.log('⚠️ Database setup skipped (may already exist)');
     }
 
+    // Now initialize Prisma client
+    const { PrismaClient } = await import('@prisma/client');
+    prisma = new PrismaClient();
+    
+    // Connect to database
+    await prisma.$connect();
+    console.log('✅ Database connected successfully');
+
     // Start server
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`🌐 Frontend: http://localhost:${PORT}`);
       console.log(`🔗 API: http://localhost:${PORT}/api`);
@@ -108,4 +117,5 @@ async function startServer() {
 
 startServer();
 
+export { prisma };
 export default app;

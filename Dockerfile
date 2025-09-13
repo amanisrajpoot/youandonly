@@ -20,8 +20,9 @@ RUN npm run build
 # Install backend dependencies
 RUN cd backend && npm install --legacy-peer-deps
 
-# Generate Prisma client
-RUN cd backend && npx prisma generate
+# Copy Prisma schema to root and generate client
+RUN cp backend/prisma/schema.prisma ./schema.prisma
+RUN npx prisma generate
 
 # Expose port
 EXPOSE 5000

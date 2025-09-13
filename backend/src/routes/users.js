@@ -1,6 +1,6 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
-import { prisma } from '../server.js';
+import { prisma } from '../../../server.js';
 import { authenticateToken, requireAdmin } from '../middleware/auth.js';
 import { hashPassword, comparePassword } from '../utils/auth.js';
 
