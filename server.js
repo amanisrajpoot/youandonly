@@ -78,11 +78,34 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`🌐 Frontend: http://localhost:${PORT}`);
-  console.log(`🔗 API: http://localhost:${PORT}/api`);
-});
+// Initialize database and start server
+async function startServer() {
+  try {
+    // Setup database if needed
+    console.log('🗄️ Setting up database...');
+    const { execSync } = await import('child_process');
+    
+    try {
+      execSync('cd backend && npx prisma generate', { stdio: 'pipe' });
+      execSync('cd backend && npx prisma db push', { stdio: 'pipe' });
+      execSync('cd backend && node src/seed-sqlite.js', { stdio: 'pipe' });
+      console.log('✅ Database setup completed');
+    } catch (error) {
+      console.log('⚠️ Database setup skipped (may already exist)');
+    }
+
+    // Start server
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`🌐 Frontend: http://localhost:${PORT}`);
+      console.log(`🔗 API: http://localhost:${PORT}/api`);
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
 
 export default app;
