@@ -17,7 +17,9 @@ RUN npm install --legacy-peer-deps
 # Copy source code
 COPY . .
 
-# Build frontend
+# Build frontend with environment variables
+ARG VITE_GEMINI_API_KEY
+ENV VITE_GEMINI_API_KEY="AIzaSyBFKMDqJsSRoudinz1b4oWXVJJnFnAVJgU"
 RUN npm run build
 
 # Install backend dependencies
