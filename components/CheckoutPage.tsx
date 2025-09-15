@@ -87,57 +87,57 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
       <div className="flex items-center mb-8">
         <button
           onClick={onBack}
-          className="inline-flex items-center gap-2 text-cyan-400 hover:text-cyan-300 font-semibold"
+          className="inline-flex items-center gap-2 text-accent hover:text-accent-hover font-semibold transition-colors"
         >
           <ChevronLeftIcon className="w-5 h-5" />
           Back to Cart
         </button>
       </div>
 
-      <h2 className="font-orbitron text-3xl md:text-4xl font-bold mb-8 text-shadow-glow text-center">
+      <h2 className="text-heading-2 md:text-heading-1 text-primary mb-8 text-center">
         Review Your Order
       </h2>
 
       <div className="grid md:grid-cols-2 gap-8">
         {/* Order Items */}
         <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-gray-300 mb-4">Order Items</h3>
+          <h3 className="text-heading-4 text-primary mb-4">Order Items</h3>
           {cartItems.map((item, index) => (
-            <div key={`${item.id}-${index}`} className="flex items-center bg-gray-800/40 border border-gray-700 rounded-lg p-4 gap-4">
-              <img src={item.imageUrl} alt={item.name} className="w-16 h-16 object-cover rounded-md" />
+            <div key={`${item.id}-${index}`} className="flex items-center bg-white border border-light rounded-2xl p-4 gap-4 shadow-md">
+              <img src={item.imageUrl} alt={item.name} className="w-16 h-16 object-cover rounded-lg" />
               <div className="flex-grow">
-                <h4 className="font-semibold text-white">{item.name}</h4>
-                <p className="text-sm text-gray-400">{item.category}</p>
+                <h4 className="font-semibold text-primary">{item.name}</h4>
+                <p className="text-body-sm text-muted">{item.category}</p>
               </div>
               <div className="text-right">
-                <p className="font-semibold text-cyan-400">${item.price.toFixed(2)}</p>
+                <p className="font-semibold text-accent">${item.price.toFixed(2)}</p>
               </div>
             </div>
           ))}
         </div>
 
         {/* Order Summary */}
-        <div className="bg-gray-800/40 border border-gray-700 rounded-lg p-6">
-          <h3 className="text-xl font-semibold text-gray-300 mb-4">Order Summary</h3>
+        <div className="bg-white border border-light rounded-2xl p-6 shadow-md">
+          <h3 className="text-heading-4 text-primary mb-4">Order Summary</h3>
           <div className="space-y-3">
             <div className="flex justify-between">
-              <span className="text-gray-300">Subtotal</span>
-              <span className="text-white">${subtotal.toFixed(2)}</span>
+              <span className="text-secondary">Subtotal</span>
+              <span className="text-primary">${subtotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-300">Tax (8%)</span>
-              <span className="text-white">${tax.toFixed(2)}</span>
+              <span className="text-secondary">Tax (8%)</span>
+              <span className="text-primary">${tax.toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-300">Shipping</span>
-              <span className="text-white">
+              <span className="text-secondary">Shipping</span>
+              <span className="text-primary">
                 {shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}
               </span>
             </div>
-            <div className="border-t border-gray-600 pt-3">
-              <div className="flex justify-between text-lg font-semibold">
-                <span className="text-white">Total</span>
-                <span className="text-cyan-400">${total.toFixed(2)}</span>
+            <div className="border-t border-light pt-3">
+              <div className="flex justify-between text-body-lg font-semibold">
+                <span className="text-primary">Total</span>
+                <span className="text-accent">${total.toFixed(2)}</span>
               </div>
             </div>
           </div>
@@ -145,7 +145,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
           <button
             onClick={handleCreateOrder}
             disabled={isCreatingOrder}
-            className="w-full mt-6 bg-cyan-600 hover:bg-cyan-500 disabled:bg-cyan-800 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-md transition-colors flex items-center justify-center"
+            className="w-full mt-6 bg-accent hover:bg-accent-hover disabled:bg-muted disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center"
           >
             {isCreatingOrder ? (
               <>
@@ -160,8 +160,8 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
       </div>
 
       {error && (
-        <div className="mt-6 p-4 bg-red-900/20 border border-red-500 rounded-lg">
-          <p className="text-red-400">{error}</p>
+        <div className="mt-6 p-4 bg-error/10 border border-error rounded-lg">
+          <p className="text-error">{error}</p>
         </div>
       )}
     </div>
@@ -172,18 +172,18 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
       <div className="flex items-center mb-8">
         <button
           onClick={() => setCurrentStep('review')}
-          className="inline-flex items-center gap-2 text-cyan-400 hover:text-cyan-300 font-semibold"
+          className="inline-flex items-center gap-2 text-accent hover:text-accent-hover font-semibold transition-colors"
         >
           <ChevronLeftIcon className="w-5 h-5" />
           Back to Review
         </button>
       </div>
 
-      <h2 className="font-orbitron text-3xl md:text-4xl font-bold mb-8 text-shadow-glow text-center">
+      <h2 className="text-heading-2 md:text-heading-1 text-primary mb-8 text-center">
         Payment
       </h2>
 
-      <div className="bg-gray-800/40 border border-gray-700 rounded-lg p-8">
+      <div className="bg-white border border-light rounded-2xl p-8 shadow-md">
         <StripeProvider>
           <PaymentForm
             amount={total}
@@ -195,8 +195,8 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
       </div>
 
       {error && (
-        <div className="mt-6 p-4 bg-red-900/20 border border-red-500 rounded-lg">
-          <p className="text-red-400">{error}</p>
+        <div className="mt-6 p-4 bg-error/10 border border-error rounded-lg">
+          <p className="text-error">{error}</p>
         </div>
       )}
     </div>
@@ -204,18 +204,18 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
   const renderSuccessStep = () => (
     <div className="max-w-2xl mx-auto text-center animate-fade-in py-16">
-      <div className="bg-gray-800/40 border border-gray-700 rounded-lg p-12 flex flex-col items-center">
-        <CheckCircleIcon className="w-20 h-20 text-cyan-400 mb-6" />
-        <h2 className="font-orbitron text-3xl md:text-4xl font-bold mb-4 text-shadow-glow">
+      <div className="bg-white border border-light rounded-2xl p-12 flex flex-col items-center shadow-xl">
+        <CheckCircleIcon className="w-20 h-20 text-success mb-6" />
+        <h2 className="text-heading-2 md:text-heading-1 text-primary mb-4">
           Payment Successful!
         </h2>
-        <p className="text-lg text-gray-300 mb-8">
+        <p className="text-body-lg text-secondary mb-8">
           Your order has been confirmed and payment processed successfully. 
           A confirmation email will be sent to {user?.email}.
         </p>
         <button
           onClick={onContinueShopping}
-          className="font-orbitron text-lg inline-flex items-center gap-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-cyan-400 focus:ring-opacity-50 shadow-[0_0_20px_rgba(34,211,238,0.5)]"
+          className="inline-flex items-center gap-3 bg-accent hover:bg-accent-hover text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-accent/30"
         >
           Continue Shopping
         </button>

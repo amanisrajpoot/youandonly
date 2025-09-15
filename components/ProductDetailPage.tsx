@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import type { ClothingItem, ProductVariant } from '../types';
 import { ChevronLeftIcon } from './icons';
 import { ProductVariantSelector } from './ProductVariantSelector';
+import { ProductReviews } from './ProductReviews';
 import productService from '../services/productService';
 
 interface ProductDetailPageProps {
@@ -133,6 +134,14 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product, o
                     {!isInStock ? 'Out of Stock' : `Add to Cart - $${(currentPrice * quantity).toFixed(2)}`}
                 </button>
             </div>
+        </div>
+
+        {/* Product Reviews Section */}
+        <div className="mt-16">
+            <ProductReviews 
+                productId={product.id.toString()} 
+                productName={product.name} 
+            />
         </div>
     </section>
   );

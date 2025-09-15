@@ -47,54 +47,54 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSwitc
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 p-4">
       <div className="flex items-center justify-center min-h-full">
-        <div className="bg-gray-800 rounded-lg p-8 w-full max-w-md">
+        <div className="bg-white rounded-2xl p-8 w-full max-w-md shadow-xl">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-orbitron font-bold text-cyan-400">Login</h2>
+          <h2 className="text-heading-3 text-primary">Login</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white text-2xl"
+            className="text-muted hover:text-primary text-2xl transition-colors"
           >
             ×
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-body-sm font-medium text-primary mb-2">
               Email
             </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              className="w-full px-4 py-3 bg-secondary border border-light rounded-lg text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
               placeholder="Enter your email"
               disabled={isLoading}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-body-sm font-medium text-primary mb-2">
               Password
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              className="w-full px-4 py-3 bg-secondary border border-light rounded-lg text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
               placeholder="Enter your password"
               disabled={isLoading}
             />
           </div>
 
           {error && (
-            <div className="text-red-400 text-sm">{error}</div>
+            <div className="text-error text-body-sm">{error}</div>
           )}
 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-cyan-600 hover:bg-cyan-500 disabled:bg-cyan-800 text-white font-bold py-2 px-4 rounded-md transition-colors flex items-center justify-center"
+            className="w-full bg-accent hover:bg-accent-hover disabled:bg-muted text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center"
           >
             {isLoading ? (
               <>
@@ -108,11 +108,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSwitc
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-gray-300">
+          <p className="text-secondary">
             Don't have an account?{' '}
             <button
               onClick={onSwitchToRegister}
-              className="text-cyan-400 hover:text-cyan-300 underline"
+              className="text-accent hover:text-accent-hover underline transition-colors"
             >
               Register here
             </button>

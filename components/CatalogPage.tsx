@@ -80,10 +80,10 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onProductClick }) => {
   return (
     <section className="animate-fade-in">
       <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold font-orbitron mb-4 text-shadow-glow">
+        <h2 className="text-heading-2 md:text-heading-1 text-primary mb-4">
           Explore The Collection
         </h2>
-        <p className="text-lg text-gray-300">
+        <p className="text-body-lg text-secondary">
           Browse our curated catalog of futuristic and classic pieces.
         </p>
       </div>
@@ -103,7 +103,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onProductClick }) => {
           {/* Filter Toggle Button (Mobile) */}
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="lg:hidden bg-gray-800 border border-gray-600 text-white px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors"
+            className="lg:hidden bg-accent hover:bg-accent-hover text-white px-4 py-3 rounded-lg transition-colors"
           >
             {showFilters ? 'Hide Filters' : 'Show Filters'}
           </button>
@@ -111,13 +111,13 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onProductClick }) => {
 
         {/* Results Summary */}
         <div className="flex justify-between items-center mb-4">
-          <p className="text-gray-300">
+          <p className="text-secondary">
             {isLoading ? 'Loading...' : `${displayedItems.length} products found`}
           </p>
           {(searchQuery || Object.keys(filters).length > 0) && (
             <button
               onClick={clearAllFilters}
-              className="text-cyan-400 hover:text-cyan-300 text-sm underline"
+              className="text-accent hover:text-accent-hover text-body-sm underline transition-colors"
             >
               Clear all filters
             </button>
@@ -143,24 +143,24 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onProductClick }) => {
           {isLoading ? (
             <div className="flex justify-center items-center py-12">
               <LoadingSpinner className="w-8 h-8" />
-              <span className="ml-3 text-gray-300">Loading products...</span>
+              <span className="ml-3 text-secondary">Loading products...</span>
             </div>
           ) : error ? (
             <div className="text-center py-12">
-              <p className="text-red-400 text-lg mb-4">{error}</p>
+              <p className="text-error text-body-lg mb-4">{error}</p>
               <button 
                 onClick={() => window.location.reload()} 
-                className="text-cyan-400 hover:text-cyan-300 underline"
+                className="text-accent hover:text-accent-hover underline transition-colors"
               >
                 Try again
               </button>
             </div>
           ) : displayedItems.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-400 text-lg mb-4">No products found matching your criteria</p>
+              <p className="text-muted text-body-lg mb-4">No products found matching your criteria</p>
               <button 
                 onClick={clearAllFilters}
-                className="text-cyan-400 hover:text-cyan-300 underline"
+                className="text-accent hover:text-accent-hover underline transition-colors"
               >
                 Clear filters
               </button>

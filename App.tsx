@@ -10,6 +10,7 @@ import { SparklesIcon } from './components/icons';
 import { ProductDetailPage } from './components/ProductDetailPage';
 import { CartPage } from './components/CartPage';
 import { CatalogPage } from './components/CatalogPage';
+import { EnhancedShopPage } from './components/EnhancedShopPage';
 import { CheckoutPage } from './components/CheckoutPage';
 import { ProductCard } from './components/ProductCard';
 import { OrderHistory } from './components/OrderHistory';
@@ -17,9 +18,22 @@ import { OrderDetails } from './components/OrderDetails';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AuthProvider } from './contexts/AuthContext';
 import productService from './services/productService';
+import HeroBanner from './components/HeroBanner';
+import PromotionalSection from './components/PromotionalSection';
+import ModernProductGrid from './components/ModernProductGrid';
+import TrustSignals from './components/TrustSignals';
+import TestimonialsSection from './components/TestimonialsSection';
+import ModernFooter from './components/ModernFooter';
+import CategoryTiles from './components/CategoryTiles';
+import ProductCarousel from './components/ProductCarousel';
+import NewsletterSignup from './components/NewsletterSignup';
+import Breadcrumb from './components/Breadcrumb';
+import { QuickViewModal } from './components/QuickViewModal';
+import { WishlistPage } from './components/WishlistPage';
+import { ComparePage } from './components/ComparePage';
 
 
-type View = 'home' | 'pdp' | 'cart' | 'catalog' | 'checkout' | 'orders' | 'order-details' | 'admin';
+type View = 'home' | 'pdp' | 'cart' | 'catalog' | 'checkout' | 'orders' | 'order-details' | 'admin' | 'wishlist' | 'compare';
 
 const App: React.FC = () => {
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
@@ -34,6 +48,8 @@ const App: React.FC = () => {
   const [featuredItems, setFeaturedItems] = useState<ClothingItem[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [isLoadingFeatured, setIsLoadingFeatured] = useState(true);
+  const [quickViewProduct, setQuickViewProduct] = useState<ClothingItem | null>(null);
+  const [showQuickView, setShowQuickView] = useState(false);
 
   // Load featured items on component mount
   useEffect(() => {
@@ -78,9 +94,31 @@ const App: React.FC = () => {
     setView('pdp');
   }
 
-  const handleAddToCart = (item: ClothingItem) => {
-    setCart(prevCart => [...prevCart, item]);
+  const handleAddToCart = (item: ClothingItem, quantity: number = 1) => {
+    // Add multiple items if quantity > 1
+    const itemsToAdd = Array(quantity).fill(item);
+    setCart(prevCart => [...prevCart, ...itemsToAdd]);
     setView('cart');
+  };
+
+  const handleQuickView = (item: ClothingItem) => {
+    setQuickViewProduct(item);
+    setShowQuickView(true);
+  };
+
+  const handleCloseQuickView = () => {
+    setShowQuickView(false);
+    setQuickViewProduct(null);
+  };
+
+  const handleAddToWishlist = (item: ClothingItem) => {
+    // TODO: Implement wishlist functionality
+    console.log('Added to wishlist:', item);
+  };
+
+  const handleAddToCompare = (item: ClothingItem) => {
+    // TODO: Implement compare functionality
+    console.log('Added to compare:', item);
   };
   
   const handleRemoveFromCart = (indexToRemove: number) => {
@@ -108,63 +146,67 @@ const App: React.FC = () => {
     setView('admin');
   };
 
-  const handleNavigate = (targetView: 'home' | 'cart' | 'catalog') => {
+  const handleNavigate = (targetView: 'home' | 'cart' | 'catalog' | 'wishlist' | 'compare') => {
     setView(targetView);
   }
 
   const renderHome = () => (
     <>
-     <section className="text-center max-w-4xl mx-auto mb-24">
-        <h2 className="text-4xl md:text-5xl font-bold font-orbitron mb-4 text-shadow-glow">
-          Find a Style That's Uniquely You
-        </h2>
-        <p className="text-lg text-gray-300">
-          Explore our curated collection or let our AI build the perfect outfit, just for you.
-        </p>
-      </section>
+      {/* Hero Banner */}
+      <HeroBanner onExploreCollection={() => setView('catalog')} />
 
-      <section className="mb-24">
-        <h3 className="text-3xl font-orbitron font-bold text-center mb-8 text-shadow-glow">Featured Collection</h3>
-        {isLoadingFeatured ? (
-          <div className="flex justify-center items-center py-12">
-            <LoadingSpinner className="w-8 h-8" />
-            <span className="ml-3 text-gray-300">Loading featured items...</span>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-6xl mx-auto">
-                {featuredItems.map(item => (
-                    <ProductCard key={item.id} product={item} onClick={() => handleProductClick(item)} />
-                ))}
-            </div>
-            <div className="text-center mt-10">
-                <button onClick={() => setView('catalog')} className="font-orbitron text-lg inline-flex items-center gap-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-cyan-400 focus:ring-opacity-50 shadow-[0_0_20px_rgba(34,211,238,0.5)]">
-                    View Full Collection
-                </button>
-            </div>
-          </>
-        )}
-    </section>
+      {/* Category Highlight Tiles */}
+      <CategoryTiles onNavigate={setView} />
 
-    <section className="text-center max-w-3xl mx-auto py-16 border-t border-cyan-500/20">
-        <h2 className="text-3xl md:text-4xl font-bold font-orbitron mb-4 text-shadow-glow">
+      {/* Trust Signals */}
+      <TrustSignals />
+
+      {/* Featured Products Carousel */}
+      <ProductCarousel
+        products={featuredItems}
+        onProductClick={handleProductClick}
+        onAddToCart={handleAddToCart}
+        onQuickView={handleQuickView}
+        title="Shop our top picks"
+        subtitle="Reserved for special occasions"
+      />
+
+      {/* Promotional Section */}
+      <PromotionalSection onShopNow={() => setView('catalog')} />
+
+      {/* New Arrivals Carousel */}
+      <ProductCarousel
+        products={featuredItems.slice(0, 6)}
+        onProductClick={handleProductClick}
+        onAddToCart={handleAddToCart}
+        onQuickView={handleQuickView}
+        title="New Arrivals"
+        subtitle="Discover the latest fashion trends"
+      />
+
+      {/* AI Stylist Section */}
+      <section className="section-padding bg-primary">
+        <div className="container mx-auto container-padding text-center">
+          <h2 className="text-heading-2 md:text-heading-1 text-primary mb-8">
             Need Inspiration? Meet Your AI Stylist
-        </h2>
-        <p className="text-lg text-gray-300 mb-8">
-          Select a fashion style below and let our AI craft unique outfits, just for you.
-        </p>
-        <StyleSelector
-          styles={FASHION_STYLES}
-          selectedStyle={selectedStyle}
-          onSelectStyle={setSelectedStyle}
-        />
+          </h2>
+          <p className="text-body-lg text-secondary mb-16 max-w-4xl mx-auto">
+            Select a fashion style below and let our AI craft unique outfits, just for you.
+          </p>
+          
+          <StyleSelector
+            styles={FASHION_STYLES}
+            selectedStyle={selectedStyle}
+            onSelectStyle={setSelectedStyle}
+          />
+          
         {selectedStyle && (
           <div className="mt-8">
-            <button
-              onClick={handleGenerateClick}
-              disabled={isLoading}
-              className="font-orbitron text-lg inline-flex items-center gap-3 bg-cyan-600 hover:bg-cyan-500 disabled:bg-cyan-800 disabled:cursor-not-allowed text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-cyan-400 focus:ring-opacity-50 shadow-[0_0_20px_rgba(34,211,238,0.5)]"
-            >
+              <button
+                onClick={handleGenerateClick}
+                disabled={isLoading}
+                className="inline-flex items-center gap-3 bg-accent hover:bg-accent-hover disabled:bg-muted disabled:cursor-not-allowed text-white font-bold py-4 px-10 rounded-full transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-accent/30"
+              >
               {isLoading ? (
                 <>
                   <LoadingSpinner className="w-6 h-6" />
@@ -179,32 +221,45 @@ const App: React.FC = () => {
             </button>
           </div>
         )}
+
+          {error && <p className="text-center text-error text-lg mt-8">{error}</p>}
+          
+          {generatedOutfits.length > 0 && (
+            <div className="mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {generatedOutfits.map((outfit, index) => (
+                <OutfitCard key={index} outfit={outfit} onProductClick={handleProductClick} />
+              ))}
+            </div>
+          )}
+
+          {!isLoading && generatedOutfits.length === 0 && !error && selectedStyle && (
+            <div className="text-center text-muted mt-20">
+              <p className="text-heading-4">Your personal gallery awaits.</p>
+            </div>
+          )}
+        </div>
       </section>
 
-      <section className="mt-16">
-        {error && <p className="text-center text-red-400 text-lg">{error}</p>}
-        
-        {generatedOutfits.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {generatedOutfits.map((outfit, index) => (
-              <OutfitCard key={index} outfit={outfit} onProductClick={handleProductClick} />
-            ))}
-          </div>
-        )}
+      {/* Testimonials */}
+      <TestimonialsSection />
 
-        {!isLoading && generatedOutfits.length === 0 && !error && selectedStyle && (
-            <div className="text-center text-gray-500 mt-20">
-            <p className="text-2xl font-orbitron">Your personal gallery awaits.</p>
-          </div>
-        )}
-      </section>
+      {/* Newsletter Signup */}
+      <NewsletterSignup />
     </>
   );
 
   const renderContent = () => {
     switch(view) {
       case 'catalog':
-        return <CatalogPage onProductClick={handleProductClick} />;
+        return (
+          <EnhancedShopPage
+            onProductClick={handleProductClick}
+            onQuickView={handleQuickView}
+            onAddToCart={handleAddToCart}
+            onAddToWishlist={handleAddToWishlist}
+            onAddToCompare={handleAddToCompare}
+          />
+        );
       case 'pdp':
         return selectedProduct && <ProductDetailPage product={selectedProduct} onAddToCart={handleAddToCart} onBack={() => setView(previousView)} />;
       case 'cart':
@@ -239,6 +294,10 @@ const App: React.FC = () => {
         );
       case 'admin':
         return <AdminDashboard onBack={() => setView(previousView)} />;
+      case 'wishlist':
+        return <WishlistPage onProductClick={handleProductClick} onAddToCart={handleAddToCart} onBack={() => setView('home')} />;
+      case 'compare':
+        return <ComparePage onProductClick={handleProductClick} onAddToCart={handleAddToCart} onBack={() => setView('home')} />;
       case 'home':
       default:
         return renderHome();
@@ -248,18 +307,29 @@ const App: React.FC = () => {
 
   return (
     <AuthProvider>
-      <div className="min-h-screen bg-black bg-opacity-80 backdrop-blur-sm text-gray-100">
-        <div className="absolute top-0 left-0 w-full h-full bg-gray-900/50 z-[-1] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(16,123,148,0.3),rgba(255,255,255,0))]"></div>
+      <div className="min-h-screen bg-white">
         <Header 
           onNavigate={handleNavigate} 
           onViewOrders={handleViewOrders}
           onViewAdmin={handleViewAdmin}
+          onProductClick={handleProductClick}
           cartItemCount={cart.length} 
         />
-        <main className="container mx-auto px-4 py-8">
-          {renderContent()}
-        </main>
-      </div>
+        <main>
+        {renderContent()}
+      </main>
+        <ModernFooter />
+        
+        {/* Quick View Modal */}
+        <QuickViewModal
+          product={quickViewProduct}
+          isOpen={showQuickView}
+          onClose={handleCloseQuickView}
+          onAddToCart={handleAddToCart}
+          onAddToWishlist={handleAddToWishlist}
+          onAddToCompare={handleAddToCompare}
+        />
+    </div>
     </AuthProvider>
   );
 };
