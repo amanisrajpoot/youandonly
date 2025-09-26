@@ -136,24 +136,10 @@ app.use((err, req, res, next) => {
 // Initialize database and start server
 async function startServer() {
   try {
-    // Setup database first
-    console.log('🗄️ Setting up database...');
-    const { execSync } = await import('child_process');
-    
+    // Initialize Prisma client directly
+    console.log('🗄️ Connecting to database...');
     try {
-      // Copy Prisma schema to root for generation
-      execSync('cp backend/prisma/schema.prisma ./schema.prisma', { stdio: 'pipe' });
-      execSync('npx prisma generate', { stdio: 'pipe' });
-      execSync('cd backend && npx prisma db push', { stdio: 'pipe' });
-      execSync('cd backend && node src/seed-sqlite.js', { stdio: 'pipe' });
-      console.log('✅ Database setup completed');
-    } catch (error) {
-      console.log('⚠️ Database setup skipped (may already exist)');
-    }
-
-    // Now initialize Prisma client
-    try {
-      const { PrismaClient } = await import('@prisma/client');
+      const { PrismaClient } = await import('./backend/node_modules/@prisma/client/default.js');
       prisma = new PrismaClient();
       
       // Connect to database

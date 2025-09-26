@@ -36,6 +36,8 @@ import { ComparePage } from './components/ComparePage';
 type View = 'home' | 'pdp' | 'cart' | 'catalog' | 'checkout' | 'orders' | 'order-details' | 'admin' | 'wishlist' | 'compare';
 
 const App: React.FC = () => {
+  console.log('🚀 App component rendering...');
+  
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
   const [generatedOutfits, setGeneratedOutfits] = useState<Outfit[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -55,11 +57,22 @@ const App: React.FC = () => {
   useEffect(() => {
     const loadFeaturedItems = async () => {
       try {
+        console.log('🔄 Loading featured items...');
         setIsLoadingFeatured(true);
         const items = await productService.getFeaturedProducts();
+        console.log('✅ Featured items loaded:', items);
         setFeaturedItems(items);
       } catch (error) {
-        console.error('Failed to load featured items:', error);
+        console.error('❌ Failed to load featured items:', error);
+        // Fallback to local data
+        const fallbackItems = [
+          { id: 21, name: "Leather Biker Jacket", category: "Outerwear", imageUrl: "https://picsum.photos/seed/bikerjacket/400/600", price: 299.99, description: "An iconic biker jacket crafted from supple genuine leather." },
+          { id: 7, name: "Cargo Pants", category: "Bottom", imageUrl: "https://picsum.photos/seed/cargopants/400/600", price: 99.99, description: "Utilitarian cargo pants crafted from durable ripstop cotton." },
+          { id: 12, name: "Chunky Black Boots", category: "Shoes", imageUrl: "https://picsum.photos/seed/blackboots/400/600", price: 179.99, description: "Bold combat-style boots with a chunky lug sole." },
+          { id: 19, name: "Round Sunglasses", category: "Accessory", imageUrl: "https://picsum.photos/seed/sunglasses/400/600", price: 69.99, description: "Vintage-style round sunglasses with UV protection." }
+        ];
+        console.log('🔄 Using fallback items:', fallbackItems);
+        setFeaturedItems(fallbackItems);
       } finally {
         setIsLoadingFeatured(false);
       }
@@ -150,39 +163,56 @@ const App: React.FC = () => {
     setView(targetView);
   }
 
-  const renderHome = () => (
-    <>
-      {/* Hero Banner */}
-      <HeroBanner onExploreCollection={() => setView('catalog')} />
+  const renderHome = () => {
+    console.log('🏠 renderHome called, isLoadingFeatured:', isLoadingFeatured, 'featuredItems:', featuredItems.length);
+    
+    if (isLoadingFeatured) {
+      console.log('⏳ Showing loading state...');
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4"></div>
+            <p className="text-body-lg text-secondary">Loading featured products...</p>
+          </div>
+        </div>
+      );
+    }
 
-      {/* Category Highlight Tiles */}
-      <CategoryTiles onNavigate={setView} />
+    console.log('✅ Rendering home page with', featuredItems.length, 'featured items');
 
-      {/* Trust Signals */}
-      <TrustSignals />
+    return (
+      <>
+        {/* Hero Banner */}
+        <HeroBanner onExploreCollection={() => setView('catalog')} />
 
-      {/* Featured Products Carousel */}
-      <ProductCarousel
-        products={featuredItems}
-        onProductClick={handleProductClick}
-        onAddToCart={handleAddToCart}
-        onQuickView={handleQuickView}
-        title="Shop our top picks"
-        subtitle="Reserved for special occasions"
-      />
+        {/* Category Highlight Tiles */}
+        <CategoryTiles onNavigate={setView} />
 
-      {/* Promotional Section */}
-      <PromotionalSection onShopNow={() => setView('catalog')} />
+        {/* Trust Signals */}
+        <TrustSignals />
 
-      {/* New Arrivals Carousel */}
-      <ProductCarousel
-        products={featuredItems.slice(0, 6)}
-        onProductClick={handleProductClick}
-        onAddToCart={handleAddToCart}
-        onQuickView={handleQuickView}
-        title="New Arrivals"
-        subtitle="Discover the latest fashion trends"
-      />
+        {/* Featured Products Carousel */}
+        <ProductCarousel
+          products={featuredItems}
+          onProductClick={handleProductClick}
+          onAddToCart={handleAddToCart}
+          onQuickView={handleQuickView}
+          title="Shop our top picks"
+          subtitle="Reserved for special occasions"
+        />
+
+        {/* Promotional Section */}
+        <PromotionalSection onShopNow={() => setView('catalog')} />
+
+        {/* New Arrivals Carousel */}
+        <ProductCarousel
+          products={featuredItems.slice(0, 6)}
+          onProductClick={handleProductClick}
+          onAddToCart={handleAddToCart}
+          onQuickView={handleQuickView}
+          title="New Arrivals"
+          subtitle="Discover the latest fashion trends"
+        />
 
       {/* AI Stylist Section */}
       <section className="section-padding bg-primary">
@@ -245,8 +275,9 @@ const App: React.FC = () => {
 
       {/* Newsletter Signup */}
       <NewsletterSignup />
-    </>
-  );
+      </>
+    );
+  };
 
   const renderContent = () => {
     switch(view) {
